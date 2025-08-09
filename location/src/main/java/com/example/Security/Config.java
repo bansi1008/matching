@@ -12,7 +12,7 @@ public class Config {
     @Order(1)
     public SecurityFilterChain publicApiSecurityFilterChain(HttpSecurity http) throws Exception{
         http
-        .securityMatcher("/api/test") 
+        .securityMatcher("/api/location") 
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());  
         
