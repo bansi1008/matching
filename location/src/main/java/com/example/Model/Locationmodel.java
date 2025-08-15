@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 
 public class Locationmodel {
     @Id
