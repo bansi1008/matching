@@ -4,10 +4,12 @@ import com.example.Repository.Locationrepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.DTO.DriverLocationEvent;
 import com.example.Utility.JWT;
+import com.example.DTO.Kafkadto;
+import com.example.Kafka.LocationEventProducer;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import com.example.Kafka.KafkaProducerService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -30,8 +32,9 @@ import org.springframework.security.core.Authentication;
 public class Test {
    @Autowired
    private Locationrepo locrepo;
-
-
+   
+@Autowired
+private  LocationEventProducer producer;
 
    @Autowired
 private ObjectMapper objectMapper; 
@@ -61,7 +64,14 @@ Locationmodel locmodel = Locationmodel.builder()
                 
        locrepo.save(locmodel);
 
+       Kafkadto kafkadto = Kafkadto.builder()
+               .driverId(userId)
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .timestamp(LocalDateTime.now().toInstant(java.time.ZoneOffset.UTC))
+                .build();
 
+      producer.sendDriverLocation(kafkadto);
         return "location changed succesfully";
     }
 
