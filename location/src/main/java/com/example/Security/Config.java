@@ -23,7 +23,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/api/location").authenticated() // JWT required
+            .requestMatchers("/auth/api/locationrequest").authenticated() // JWT required
             .anyRequest().authenticated()
         )
         .addFilterBefore(auth, UsernamePasswordAuthenticationFilter.class);

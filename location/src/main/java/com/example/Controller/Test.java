@@ -6,6 +6,11 @@ import com.example.DTO.DriverLocationEvent;
 import com.example.Utility.JWT;
 import com.example.DTO.Kafkadto;
 import com.example.Kafka.LocationEventProducer;
+import com.example.DTO.Reqdto;
+import com.example.Repository.Riderepo;
+import com.example.Model.Requestride;
+import com.example.DTO.Kaflocreq;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,22 +35,22 @@ import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/auth/api")
 public class Test {
-   @Autowired
-   private Locationrepo locrepo;
+
+@Autowired
+private Locationrepo locrepo;
+
+@Autowired
+private Riderepo riderepo;
    
 @Autowired
 private  LocationEventProducer producer;
 
-   @Autowired
+@Autowired
 private ObjectMapper objectMapper; 
 
 @Autowired
 private JWT jwt;
-    
-    @GetMapping("/test")
-    public String b(){
-        return "hii";
-    }
+
 
    
 
@@ -73,7 +78,42 @@ Locationmodel locmodel = Locationmodel.builder()
 
       producer.sendDriverLocation(kafkadto);
         return "location changed succesfully";
-    }
+}
+
+
+
+
+
+    @PostMapping("/locationrequest")
+    public String locationRequest(@Valid @RequestBody Reqdto reqdto) {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+
+    Requestride requestride = Requestride.builder()
+            .userid(userId)
+        .pickupLat(reqdto.getPickupLat())
+        .pickupLng(reqdto.getPickupLng())  
+        .dropLat(reqdto.getDropLat())
+        .dropLng(reqdto.getDropLng())      
+        .status("PENDING")
+        .requestedAt(LocalDateTime.now())
+        .build();
+        
+            riderepo.save(requestride);
+
+         Kaflocreq kaflocreq = Kaflocreq.builder()
+            .userid(userId)
+            .pickupLat(reqdto.getPickupLat())
+            .pickupLng(reqdto.getPickupLng())
+            .dropLat(reqdto.getDropLat())
+            .dropLng(reqdto.getDropLng())
+            .build();
+        
+
+        
+            return "location request sent successfully";
+        }
 
     
     

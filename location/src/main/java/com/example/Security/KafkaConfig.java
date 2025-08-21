@@ -37,5 +37,7 @@ public class KafkaConfig {
     public KafkaTemplate<String, Kafkadto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
+   
     
 }
